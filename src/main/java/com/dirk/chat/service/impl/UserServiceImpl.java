@@ -59,4 +59,20 @@ public class UserServiceImpl implements UserService {
 
         return user;
     }
+
+    /**
+     * 用户登录
+     * @param user
+     * @return
+     */
+    @Override
+    public User login(User user) {
+
+        User byUsername = userRepository.findByUsername(user.getUsername());
+        if(user.getPassword().equals(encryptor.decrypt(byUsername.getPassword()))){
+            return byUsername;
+        }
+
+        return null;
+    }
 }

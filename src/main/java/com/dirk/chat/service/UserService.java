@@ -11,4 +11,6 @@ public interface UserService {
     boolean usernameIsExist(String username);
 
     User register(User user);
+
+    User login(User user);
 }

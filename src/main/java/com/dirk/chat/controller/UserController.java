@@ -63,4 +63,38 @@ public class UserController {
         return JSONResult.ok(userResult);
     }
 
+    /**
+     * 用户登录
+     * @return
+     */
+    @PostMapping("/login")
+    @ResponseBody
+    public JSONResult login(@RequestBody User user){
+
+        System.out.println("user = " + user);
+
+        // 判断用户名、密码是否为空
+        if (StringUtils.isEmpty(user.getUsername())
+                || StringUtils.isEmpty(user.getPassword())) {
+            return JSONResult.errorMsg("登录信息不能为空");
+        }
+
+        // 判断用户名是否存在
+        boolean usernameIsExist = userService.usernameIsExist(user.getUsername());
+        User userResult ;
+        if(usernameIsExist){
+            // 完成登录
+            userResult = userService.login(user);
+        }else {
+            return JSONResult.errorMsg("用户名不存在");
+        }
+
+        // 判断登录是否成功
+        if (StringUtils.isEmpty(userResult)) {
+            return JSONResult.errorMsg("密码错误");
+        }
+
+        return JSONResult.ok(userResult);
+    }
+
 }
