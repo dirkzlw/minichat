@@ -1,5 +1,6 @@
 package com.dirk.chat.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -16,6 +17,8 @@ import lombok.ToString;
  */
 @Entity
 @Table(name = "t_user")
+// 对象转换成json是忽略空字段
+@JsonIgnoreProperties(value = { "hibernateLazyInitializer"})
 @Getter
 @Setter
 @ToString

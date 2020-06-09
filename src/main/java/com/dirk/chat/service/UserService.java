@@ -13,4 +13,6 @@ public interface UserService {
     User register(User user);
 
     User login(User user);
+
+    User updateUserFace(String userId, String faceImgBigUrl);
 }
