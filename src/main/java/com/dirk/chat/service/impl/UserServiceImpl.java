@@ -110,4 +110,20 @@ public class UserServiceImpl implements UserService {
 
         return user;
     }
+
+    /**
+     * 用户修改昵称
+     * @param userId
+     * @param nickname
+     * @return
+     */
+    @Override
+    public User resetNickname(String userId, String nickname) {
+        // 更新用户信息并保存
+        User user = userRepository.getOne(userId);
+        user.setNickname(nickname);
+        userRepository.save(user);
+
+        return user;
+    }
 }

@@ -130,4 +130,24 @@ public class UserController {
         return JSONResult.ok(user);
     }
 
+    /**
+     * 用户修改昵称
+     * @param userBO
+     * @return
+     */
+    @PostMapping("/reset/nickname")
+    @ResponseBody
+    public JSONResult resetNickname(@RequestBody UserBO userBO){
+
+        // 判断提交的信息是否为空
+        if (StringUtils.isEmpty(userBO.getUserId())
+                || StringUtils.isEmpty(userBO.getNickname())) {
+            return JSONResult.errorMsg("信息不能为空");
+        }
+
+        User user = userService.resetNickname(userBO.getUserId(), userBO.getNickname());
+
+        return JSONResult.ok(user);
+    }
+
 }

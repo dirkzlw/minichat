@@ -13,6 +13,9 @@ import lombok.Setter;
 public class UserBO {
 
     private String userId;
+    // 用户昵称
+    private String nickname;
+    // 用户头像，格式为base64
     private String faceBase64Data;
 
 }
