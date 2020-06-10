@@ -10,7 +10,7 @@ import com.dirk.chat.pojo.User;
 public interface UserService {
     boolean usernameIsExist(String username);
 
-    User register(User user);
+    User register(User user,String qrcodeUrl);
 
     User login(User user);
 

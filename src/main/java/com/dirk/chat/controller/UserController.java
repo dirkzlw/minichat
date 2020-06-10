@@ -6,6 +6,10 @@ import com.dirk.chat.service.UserService;
 import com.dirk.chat.utils.FastDFSClient;
 import com.dirk.chat.utils.FileUtils;
 import com.dirk.chat.utils.JSONResult;
+import com.dirk.chat.utils.QRCodeUtils;
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -37,9 +41,6 @@ public class UserController {
     @ResponseBody
     public JSONResult register(@RequestBody User user) {
 
-        // 判断用户名是否已被注册
-        System.out.println("user = " + user);
-
         // 判断用户名、昵称、密码不能为空
         if (StringUtils.isEmpty(user.getNickname())
                 || StringUtils.isEmpty(user.getUsername())
@@ -54,8 +55,23 @@ public class UserController {
         if (usernameIsExist) {
             return JSONResult.errorMsg("用户名已被注册");
         } else {
+            // 生成用户id
+            String userId = UUID.randomUUID().toString().replace("-", "");
+            user.setUserId(userId);
+            String qrcodeUrl = "";
+            try {
+                // 为用户分配二维码
+                String tempFilePath = "./temp/" + user.getUserId() + "_qrcode.png";
+                QRCodeUtils.createQRCode(tempFilePath, user.getUserId());
+                MultipartFile qrcodeFile = FileUtils.fileToMultipart(tempFilePath);
+                qrcodeUrl = fastDFSClient.uploadQRCode(qrcodeFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return JSONResult.errorMsg("二维码分配失败，请检查网络");
+            }
+
             // 完成注册
-            userResult = userService.register(user);
+            userResult = userService.register(user,qrcodeUrl);
         }
 
         // 判断注册是否成功
@@ -74,8 +90,6 @@ public class UserController {
     @PostMapping("/login")
     @ResponseBody
     public JSONResult login(@RequestBody User user) {
-
-        System.out.println("user = " + user);
 
         // 判断用户名、密码是否为空
         if (StringUtils.isEmpty(user.getUsername())
@@ -111,7 +125,7 @@ public class UserController {
     public JSONResult uploadFaceBase64(@RequestBody UserBO userBO) {
 
         // 创建临时文件，存储base64字符串转为的图片
-        String facePath = "./temp/" + userBO.getUserId() + ".png";
+        String facePath = "./temp/" + userBO.getUserId() + "_faceimg.png";
         // 大图url
         String faceImgBigUrl;
         try {

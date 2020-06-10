@@ -51,14 +51,11 @@ public class UserServiceImpl implements UserService {
      */
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public User register(User user) {
+    public User register(User user,String qrcodeUrl) {
 
-        // 生成用户id
-        String userId = UUID.randomUUID().toString().replace("-", "");
-        user.setUserId(userId);
         user.setFaceImg("");
         user.setFaceImgBig("");
-        user.setQrcode("");
+        user.setQrcode(FASTDFS_FILE_URL + qrcodeUrl);
         // 密码加密
         user.setPassword(encryptor.encrypt(user.getPassword()));
         try {
