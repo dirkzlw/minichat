@@ -17,4 +17,6 @@ public interface UserService {
     User updateUserFace(String userId, String faceImgBigUrl);
 
     User resetNickname(String userId, String nickname);
+
+    User findUserByUsername(String friendUsername);
 }

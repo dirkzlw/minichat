@@ -114,6 +114,7 @@ public class UserServiceImpl implements UserService {
      * @param nickname
      * @return
      */
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public User resetNickname(String userId, String nickname) {
         // 更新用户信息并保存
@@ -122,5 +123,17 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         return user;
+    }
+
+    /**
+     * 根据用户名查询用户
+     * @param friendUsername
+     * @return
+     */
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public User findUserByUsername(String friendUsername) {
+
+        return userRepository.findByUsername(friendUsername);
     }
 }

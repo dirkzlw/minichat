@@ -2,17 +2,18 @@ package com.dirk.chat.controller;
 
 import com.dirk.chat.pojo.User;
 import com.dirk.chat.pojo.bo.UserBO;
+import com.dirk.chat.service.RelationService;
 import com.dirk.chat.service.UserService;
 import com.dirk.chat.utils.FastDFSClient;
 import com.dirk.chat.utils.FileUtils;
 import com.dirk.chat.utils.JSONResult;
 import com.dirk.chat.utils.QRCodeUtils;
-import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,8 +33,12 @@ public class UserController {
     private UserService userService;
     @Autowired
     private FastDFSClient fastDFSClient;
+    @Autowired
+    private RelationService relationService;
 
     /**
+     * 用户注册
+     *
      * @param user
      * @return RequestBody 用来接收前端传递给后端的json字符串中的数据
      */
@@ -67,16 +72,16 @@ public class UserController {
                 qrcodeUrl = fastDFSClient.uploadQRCode(qrcodeFile);
             } catch (IOException e) {
                 e.printStackTrace();
-                return JSONResult.errorMsg("二维码分配失败，请检查网络");
+                return JSONResult.errorMsg("服务器出错...");
             }
 
             // 完成注册
-            userResult = userService.register(user,qrcodeUrl);
+            userResult = userService.register(user, qrcodeUrl);
         }
 
         // 判断注册是否成功
         if (StringUtils.isEmpty(userResult)) {
-            return JSONResult.errorMsg("注册失败，请检查网络");
+            return JSONResult.errorMsg("服务器出错...");
         }
 
         return JSONResult.ok(userResult);
@@ -135,7 +140,7 @@ public class UserController {
             faceImgBigUrl = fastDFSClient.uploadBase64(faceFile);
         } catch (Exception e) {
             e.printStackTrace();
-            return JSONResult.errorMsg("上传失败，请检查网络");
+            return JSONResult.errorMsg("服务器出错...");
         }
 
         // 更新用户头像
@@ -146,12 +151,13 @@ public class UserController {
 
     /**
      * 用户修改昵称
+     *
      * @param userBO
      * @return
      */
     @PostMapping("/reset/nickname")
     @ResponseBody
-    public JSONResult resetNickname(@RequestBody UserBO userBO){
+    public JSONResult resetNickname(@RequestBody UserBO userBO) {
 
         // 判断提交的信息是否为空
         if (StringUtils.isEmpty(userBO.getUserId())
@@ -162,6 +168,55 @@ public class UserController {
         User user = userService.resetNickname(userBO.getUserId(), userBO.getNickname());
 
         return JSONResult.ok(user);
+    }
+
+    /**
+     * 根据用户名查询好友
+     * @param userId
+     * @param friendUsername
+     * @return
+     */
+    @PostMapping("/friend/search")
+    @ResponseBody
+    public JSONResult searchFriend(String userId, String friendUsername) {
+
+        // 判断参数是否为空
+        if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(friendUsername)) {
+            return JSONResult.errorMsg("信息不能为空");
+        }
+
+        // 判断搜索的好友是否存在
+        User userByUsername = userService.findUserByUsername(friendUsername);
+        if(userByUsername == null){
+            return JSONResult.errorMsg("此用户不存在");
+        }else if (userByUsername.getUserId().equals(userId)){
+            return JSONResult.errorMsg("不能添加自己为好友");
+        }else if(relationService.isFriend(userByUsername.getUserId(),userId)){
+            return JSONResult.errorMsg("此用户已为好友");
+        }
+
+        return JSONResult.ok(userByUsername);
+    }
+
+    /**
+     * 请求添加好友
+     * @param userId
+     * @param friendUsername
+     * @return
+     */
+    @PostMapping("/friend/add")
+    @ResponseBody
+    public JSONResult addFriend(String userId, String friendUsername) {
+
+        // 判断参数是否为空
+        if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(friendUsername)) {
+            return JSONResult.errorMsg("信息不能为空");
+        }
+
+
+
+
+        return JSONResult.ok();
     }
 
 }
