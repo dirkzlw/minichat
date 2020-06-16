@@ -2,6 +2,7 @@ package com.dirk.chat.controller;
 
 import com.dirk.chat.pojo.User;
 import com.dirk.chat.pojo.bo.UserBO;
+import com.dirk.chat.pojo.vo.FriendRequestVO;
 import com.dirk.chat.service.FrequestService;
 import com.dirk.chat.service.RelationService;
 import com.dirk.chat.service.UserService;
@@ -10,6 +11,7 @@ import com.dirk.chat.utils.FileUtils;
 import com.dirk.chat.utils.JSONResult;
 import com.dirk.chat.utils.QRCodeUtils;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -234,7 +236,9 @@ public class UserController {
             return JSONResult.errorMsg("信息不能为空");
         }
 
-        return JSONResult.ok();
+        List<FriendRequestVO> friendRequestList = userService.findFriendRequestListByUserId(userId);
+
+        return JSONResult.ok(friendRequestList);
 
     }
 

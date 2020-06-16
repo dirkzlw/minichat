@@ -1,8 +1,11 @@
 package com.dirk.chat.service.impl;
 
 import com.dirk.chat.pojo.User;
+import com.dirk.chat.pojo.vo.FriendRequestVO;
 import com.dirk.chat.repository.UserRepository;
 import com.dirk.chat.service.UserService;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import org.jasypt.encryption.StringEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,5 +138,22 @@ public class UserServiceImpl implements UserService {
     public User findUserByUsername(String friendUsername) {
 
         return userRepository.findByUsername(friendUsername);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public List<FriendRequestVO> findFriendRequestListByUserId(String userId) {
+
+        List<User> userList = userRepository.findUserByAcceptId(userId);
+        // 将user封装为FriendRequestVO
+        List<FriendRequestVO> friendRequestList = new ArrayList<>();
+        for (User user : userList) {
+            FriendRequestVO frVO = new FriendRequestVO(user.getUserId(), user.getUsername(),
+                    user.getNickname(), user.getFaceImg());
+
+            friendRequestList.add(frVO);
+        }
+
+        return friendRequestList;
     }
 }

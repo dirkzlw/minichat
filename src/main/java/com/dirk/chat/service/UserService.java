@@ -1,6 +1,8 @@
 package com.dirk.chat.service;
 
 import com.dirk.chat.pojo.User;
+import com.dirk.chat.pojo.vo.FriendRequestVO;
+import java.util.List;
 
 /**
  * @author Dirk
@@ -19,4 +21,6 @@ public interface UserService {
     User resetNickname(String userId, String nickname);
 
     User findUserByUsername(String friendUsername);
+
+    List<FriendRequestVO> findFriendRequestListByUserId(String userId);
 }

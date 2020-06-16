@@ -18,7 +18,7 @@ import lombok.Setter;
 @Setter
 public class FriendRequestVO {
 
-    private Integer userId;
+    private String userId;
 
     private String username;
 
@@ -26,4 +26,13 @@ public class FriendRequestVO {
 
     private String faceImg;
 
+    public FriendRequestVO() {
+    }
+
+    public FriendRequestVO(String userId, String username, String nickname, String faceImg) {
+        this.userId = userId;
+        this.username = username;
+        this.nickname = nickname;
+        this.faceImg = faceImg;
+    }
 }
