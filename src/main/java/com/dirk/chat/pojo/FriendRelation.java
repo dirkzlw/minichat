@@ -33,4 +33,11 @@ public class FriendRelation {
     @Column(length = 64, nullable = false)
     private String userId2;
 
+    public FriendRelation() {
+    }
+
+    public FriendRelation(String userId1, String userId2) {
+        this.userId1 = userId1;
+        this.userId2 = userId2;
+    }
 }

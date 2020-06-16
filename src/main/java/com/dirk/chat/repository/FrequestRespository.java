@@ -12,4 +12,6 @@ public interface FrequestRespository extends JpaRepository<FriendRequest,Integer
 
     FriendRequest findBySendUserIdAndAcceptUserId(String sendUserId, String acceptUserId);
 
+    void deleteFriendRequestBySendUserIdAndAcceptUserId(String sendUserId, String acceptUserId);
+
 }

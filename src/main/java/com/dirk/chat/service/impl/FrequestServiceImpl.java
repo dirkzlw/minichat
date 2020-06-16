@@ -36,4 +36,17 @@ public class FrequestServiceImpl implements FrequestService {
         }
 
     }
+
+    /**
+     * 删除好友请求
+     * @param userId
+     * @param friendId
+     */
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void deleteFriendRequest(String userId, String friendId) {
+
+        frequestRespository.deleteFriendRequestBySendUserIdAndAcceptUserId(friendId, userId);
+
+    }
 }

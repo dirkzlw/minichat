@@ -32,4 +32,20 @@ public class RelationServiceImpl implements RelationService {
 
         return relation == null ? false : true;
     }
+
+    /**
+     * 保存好友关系
+     * @param userId
+     * @param friendId
+     */
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void saveFriendRelation(String userId, String friendId) {
+
+        FriendRelation relation = relationRepository.findRelationByUserIds(userId, friendId);
+        if(relation == null){
+            relation = new FriendRelation(userId, friendId);
+            relationRepository.save(relation);
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.dirk.chat.controller;
 
+import com.dirk.chat.enums.ReplyFriendRequestEnum;
 import com.dirk.chat.pojo.User;
 import com.dirk.chat.pojo.bo.UserBO;
 import com.dirk.chat.pojo.vo.FriendRequestVO;
@@ -177,6 +178,7 @@ public class UserController {
 
     /**
      * 根据用户名查询好友
+     *
      * @param userId
      * @param friendUsername
      * @return
@@ -192,11 +194,11 @@ public class UserController {
 
         // 判断搜索的好友是否存在
         User userByUsername = userService.findUserByUsername(friendUsername);
-        if(userByUsername == null){
+        if (userByUsername == null) {
             return JSONResult.errorMsg("此用户不存在");
-        }else if (userByUsername.getUserId().equals(userId)){
+        } else if (userByUsername.getUserId().equals(userId)) {
             return JSONResult.errorMsg("不能添加自己为好友");
-        }else if(relationService.isFriend(userByUsername.getUserId(),userId)){
+        } else if (relationService.isFriend(userByUsername.getUserId(), userId)) {
             return JSONResult.errorMsg("此用户已为好友");
         }
 
@@ -205,6 +207,7 @@ public class UserController {
 
     /**
      * 请求添加好友
+     *
      * @param userId
      * @param friendUsername
      * @return
@@ -225,12 +228,13 @@ public class UserController {
 
     /**
      * 获取好友请求列表
+     *
      * @param userId
      * @return
      */
     @PostMapping("/friends/request")
     @ResponseBody
-    public JSONResult queryFriendRequest(String userId){
+    public JSONResult queryFriendRequest(String userId) {
 
         if (StringUtils.isEmpty(userId)) {
             return JSONResult.errorMsg("信息不能为空");
@@ -240,6 +244,44 @@ public class UserController {
 
         return JSONResult.ok(friendRequestList);
 
+    }
+
+    /**
+     * 回复好友请求
+     *
+     * @param userId
+     * @param friendId
+     * @param replyType
+     * @return
+     */
+    @PostMapping("/reply/friend")
+    @ResponseBody
+    public JSONResult replyFriendRequest(String userId, String friendId, Integer replyType) {
+
+        if (StringUtils.isEmpty(userId)
+                || StringUtils.isEmpty(friendId)
+                || StringUtils.isEmpty(replyType)) {
+            return JSONResult.errorMsg("信息不能为空");
+        }
+
+        // 判断replyType的值是否为0、1之一
+        if (!ReplyFriendRequestEnum.isReplyType(replyType)) {
+            return JSONResult.errorMsg("操作类型不当");
+        }else if(replyType == ReplyFriendRequestEnum.IGNORE.getType()){
+            // 忽略好友请求
+            frequestService.deleteFriendRequest(userId, friendId);
+        }else if(replyType == ReplyFriendRequestEnum.PASS.getType()){
+            // 保存好友关系
+            relationService.saveFriendRelation(userId, friendId);
+            // 通过好友请求，删除双向请求记录
+            frequestService.deleteFriendRequest(userId, friendId);
+            frequestService.deleteFriendRequest(friendId, userId);
+
+        }
+
+
+
+        return JSONResult.ok();
     }
 
 }

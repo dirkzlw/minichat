@@ -7,4 +7,6 @@ package com.dirk.chat.service;
  */
 public interface RelationService {
     boolean isFriend(String userId, String userId1);
+
+    void saveFriendRelation(String userId, String friendId);
 }

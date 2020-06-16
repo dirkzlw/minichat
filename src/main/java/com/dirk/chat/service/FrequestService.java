@@ -7,4 +7,6 @@ package com.dirk.chat.service;
  */
 public interface FrequestService {
     void addFriendRequest(String userId, String friendUserId);
+
+    void deleteFriendRequest(String userId, String friendId);
 }
