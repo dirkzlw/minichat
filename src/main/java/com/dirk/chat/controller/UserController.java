@@ -2,6 +2,7 @@ package com.dirk.chat.controller;
 
 import com.dirk.chat.pojo.User;
 import com.dirk.chat.pojo.bo.UserBO;
+import com.dirk.chat.service.FrequestService;
 import com.dirk.chat.service.RelationService;
 import com.dirk.chat.service.UserService;
 import com.dirk.chat.utils.FastDFSClient;
@@ -35,6 +36,8 @@ public class UserController {
     private FastDFSClient fastDFSClient;
     @Autowired
     private RelationService relationService;
+    @Autowired
+    private FrequestService frequestService;
 
     /**
      * 用户注册
@@ -213,10 +216,26 @@ public class UserController {
             return JSONResult.errorMsg("信息不能为空");
         }
 
-
-
+        frequestService.addFriendRequest(userId, userService.findUserByUsername(friendUsername).getUserId());
 
         return JSONResult.ok();
+    }
+
+    /**
+     * 获取好友请求列表
+     * @param userId
+     * @return
+     */
+    @PostMapping("/friends/request")
+    @ResponseBody
+    public JSONResult queryFriendRequest(String userId){
+
+        if (StringUtils.isEmpty(userId)) {
+            return JSONResult.errorMsg("信息不能为空");
+        }
+
+        return JSONResult.ok();
+
     }
 
 }

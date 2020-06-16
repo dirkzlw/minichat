@@ -1,5 +1,6 @@
 package com.dirk.chat.pojo;
 
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,29 +9,33 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 /**
- * 好友关系表
  * @author Dirk
- * @date 2020-06-11 10:52
+ * @date 2020-06-12 11:06
  * @description
  */
 @Entity
-@Table(name = "t_friend_relation")
+@Table(name = "t_friend_request")
 @Getter
 @Setter
-@ToString
-public class FriendRelation {
+public class FriendRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer relationId;
+    private Integer requestId;
 
     @Column(length = 64, nullable = false)
-    private String userId1;
+    private String sendUserId;
 
     @Column(length = 64, nullable = false)
-    private String userId2;
+    private String acceptUserId;
 
+    public FriendRequest() {
+    }
+
+    public FriendRequest(String sendUserId, String acceptUserId) {
+        this.sendUserId = sendUserId;
+        this.acceptUserId = acceptUserId;
+    }
 }

@@ -5,6 +5,8 @@ import com.dirk.chat.repository.RelationRepository;
 import com.dirk.chat.service.RelationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Dirk
@@ -22,11 +24,12 @@ public class RelationServiceImpl implements RelationService {
      * @param userId1
      * @return
      */
+    @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public boolean isFriend(String userId, String userId1) {
 
-        FriendRelation relation = relationRepository.findRelationByUserIds(userId, userId);
+        FriendRelation relation = relationRepository.findRelationByUserIds(userId, userId1);
 
-        return relation == null ? true : false;
+        return relation == null ? false : true;
     }
 }
