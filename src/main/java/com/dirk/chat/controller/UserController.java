@@ -193,16 +193,52 @@ public class UserController {
         }
 
         // 判断搜索的好友是否存在
-        User userByUsername = userService.findUserByUsername(friendUsername);
-        if (userByUsername == null) {
+        User friend = userService.findUserByUsername(friendUsername);
+
+        return judgeFriend(userId,friend);
+    }
+
+    /**
+     * 扫描二维码添加好友
+     *
+     * @param userId
+     * @param friendId
+     * @return
+     */
+    @PostMapping("/friend/search2")
+    @ResponseBody
+    public JSONResult searchFriend2(String userId, String friendId) {
+
+        // 判断参数是否为空
+        if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(friendId)) {
+            return JSONResult.errorMsg("信息不能为空");
+        }
+
+        // 判断搜索的好友是否存在
+        User friend = userService.findUserById(friendId);
+
+        return judgeFriend(userId,friend);
+
+    }
+
+    /**
+     * 判断查询出的好友是否满足条件
+     * @param userId
+     * @param friend
+     * @return
+     */
+    private JSONResult judgeFriend(String userId, User friend) {
+
+        if (friend == null) {
             return JSONResult.errorMsg("此用户不存在");
-        } else if (userByUsername.getUserId().equals(userId)) {
+        } else if (friend.getUserId().equals(userId)) {
             return JSONResult.errorMsg("不能添加自己为好友");
-        } else if (relationService.isFriend(userByUsername.getUserId(), userId)) {
+        } else if (relationService.isFriend(friend.getUserId(), userId)) {
             return JSONResult.errorMsg("此用户已为好友");
         }
 
-        return JSONResult.ok(userByUsername);
+        return JSONResult.ok(friend);
+
     }
 
     /**
@@ -267,10 +303,10 @@ public class UserController {
         // 判断replyType的值是否为0、1之一
         if (!ReplyFriendRequestEnum.isReplyType(replyType)) {
             return JSONResult.errorMsg("操作类型不当");
-        }else if(replyType == ReplyFriendRequestEnum.IGNORE.getType()){
+        } else if (replyType == ReplyFriendRequestEnum.IGNORE.getType()) {
             // 忽略好友请求
             frequestService.deleteFriendRequest(userId, friendId);
-        }else if(replyType == ReplyFriendRequestEnum.PASS.getType()){
+        } else if (replyType == ReplyFriendRequestEnum.PASS.getType()) {
             // 保存好友关系
             relationService.saveFriendRelation(userId, friendId);
             // 通过好友请求，删除双向请求记录
@@ -278,8 +314,6 @@ public class UserController {
             frequestService.deleteFriendRequest(friendId, userId);
 
         }
-
-
 
         return JSONResult.ok();
     }

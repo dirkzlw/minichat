@@ -156,4 +156,14 @@ public class UserServiceImpl implements UserService {
 
         return friendRequestList;
     }
+
+    /**
+     * 根据id查询用户
+     * @param userId
+     * @return
+     */
+    @Override
+    public User findUserById(String userId) {
+        return userRepository.getOne(userId);
+    }
 }

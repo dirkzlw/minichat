@@ -23,4 +23,6 @@ public interface UserService {
     User findUserByUsername(String friendUsername);
 
     List<FriendRequestVO> findFriendRequestListByUserId(String userId);
+
+    User findUserById(String userId);
 }
